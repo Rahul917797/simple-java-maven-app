@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = "nginx"
         DOCKER_TAG = "latest"
-        REGISTRY = "docker.io"
+        //REGISTRY = "docker.io"
         HELM_RELEASE_NAME = "nginx"
         HELM_NAMESPACE = "default"
         AWS_REGION = "us-east-1"
@@ -24,13 +24,13 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv(installationName: 'sonarqube', credentialsId: 'sonarqube') {
-                    sh "mvn clean verify sonar:sonar -Dsonar.projectKey=simple-java-maven-app -Dsonar.projectName='simple-java-maven-app'"
-                }    
-            } 
-        }
+        //stage('SonarQube Analysis') {
+          //  steps {
+            //    withSonarQubeEnv(installationName: 'sonarqube', credentialsId: 'sonarqube') {
+              //      sh "mvn clean verify sonar:sonar -Dsonar.projectKey=simple-java-maven-app -Dsonar.projectName='simple-java-maven-app'"
+               // }    
+           // } 
+       // }
         
         
         stage('Build Docker Image') {
