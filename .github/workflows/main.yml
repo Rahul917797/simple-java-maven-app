@@ -1,0 +1,47 @@
+name: Deploy tomcat to EKS
+
+on:
+  push:
+    branches: 
+      - main
+env:
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: Rahul
+
+jobs: 
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS-ACCESS-KEY-ID }}
+          aws-secret-access-key: ${{ secrets.AWS-SECRET-ACCESS-KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Update Kubeconfig
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+
+      - name: Deploy tomcat app
+        run: |
+          kubectl apply -f dep.yaml
+
+      - name: Verify deployment rollout
+        run: | 
+          kubectl rollout status deployment/dep
+
+      - name: Get pods
+        run: |
+          kubectl get pods -o wide
+         
+
