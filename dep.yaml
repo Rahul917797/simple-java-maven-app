@@ -17,9 +17,9 @@ spec:
         app: tomcat
     spec:
       containers:
-        name: tomcat
-        image: tomcat:9.0.106-jdk8-corretto-al2
-        ports:
-          - name: tomcatPort
-            containerPort: 8080
+        - name: tomcat
+          image: tomcat:9.0.106-jdk8-corretto-al2
+          ports:
+            - name: tomcatPort
+              containerPort: 8080
 
