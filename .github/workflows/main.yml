@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  EKS_CLUSTER_NAME: Rahul
+  EKS_CLUSTER_NAME: demo
 
 jobs:
   deploy:
@@ -24,19 +24,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Verify AWS CLI version
-        run: aws --version  # Should be aws-cli/2.x.x
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'latest'
-
-      - name: Debug aws eks get-token
-        env:
-          AWS_REGION: ${{ env.AWS_REGION }}
-          EKS_CLUSTER_NAME: ${{ env.EKS_CLUSTER_NAME }}
-        run: aws eks get-token --region $AWS_REGION --cluster-name $EKS_CLUSTER_NAME
 
       - name: Update kubeconfig
         env:
@@ -44,11 +36,6 @@ jobs:
           EKS_CLUSTER_NAME: ${{ env.EKS_CLUSTER_NAME }}
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
 
-      - name: Debug kubectl connectivity
-        run: |
-          kubectl config view
-          kubectl config current-context
-          kubectl get nodes
 
       - name: Deploy tomcat app
         run: |
