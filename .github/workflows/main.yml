@@ -35,10 +35,11 @@ jobs:
       - name: Deploy tomcat app
         run: |
           kubectl apply -f dep.yaml
+          kubectl apply -f svc.yaml
 
       - name: Verify deployment rollout
         run: | 
-          kubectl rollout status deployment/dep
+          kubectl rollout status deployment/tomcat
 
       - name: Get pods
         run: |
