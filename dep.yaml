@@ -20,6 +20,6 @@ spec:
         - name: tomcat
           image: tomcat:9.0.106-jdk8-corretto-al2
           ports:
-            - name: tomcatPort
+            - name: tomcat-port
               containerPort: 8080
 
