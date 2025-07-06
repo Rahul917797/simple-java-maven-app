@@ -9,7 +9,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  EKS_CLUSTER_NAME: demo
+  EKS_CLUSTER_NAME: kube
 
 jobs:
   deploy:
