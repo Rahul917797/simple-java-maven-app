@@ -46,7 +46,7 @@ jobs:
 
       - name: Verify deployment rollout
         run: |
-          kubectl rollout status deployment/dep
+          kubectl rollout status deployment/java-app
 
       - name: List pods
         run: |
