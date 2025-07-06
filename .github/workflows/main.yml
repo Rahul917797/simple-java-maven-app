@@ -1,4 +1,4 @@
-name: Deploy Java App to EKS
+name: Deploy Java app to EKS
 
 on:
   push:
@@ -20,15 +20,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build JAR file with Maven
-        run: mvn clean package
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -36,12 +27,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Log in to Amazon ECR
+      - name: Set up Java and Maven
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build JAR
         run: |
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+          cd simple-java-maven-app
+          mvn clean package
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build and push Docker image
         run: |
+          cd simple-java-maven-app
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
@@ -51,16 +53,18 @@ jobs:
           version: 'latest'
 
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+        run: |
+          aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
 
       - name: Deploy to EKS
         run: |
-          kubectl apply -f dep.yaml
-          kubectl apply -f svc.yaml
+          kubectl apply -f simple-java-maven-app/dep.yaml
+          kubectl apply -f simple-java-maven-app/svc.yaml
 
       - name: Verify rollout
         run: |
           kubectl rollout status deployment/java-app --timeout=2m
 
-      - name: Get Service Info
-        run: kubectl get svc java-service
+      - name: List pods
+        run: |
+          kubectl get pods -o wide
