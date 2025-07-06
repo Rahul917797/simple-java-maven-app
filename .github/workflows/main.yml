@@ -16,13 +16,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      AWS_REGION: ${{ env.AWS_REGION }}
-      EKS_CLUSTER_NAME: ${{ env.EKS_CLUSTER_NAME }}
-      ECR_REGISTRY: ${{ env.ECR_REGISTRY }}
-      ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
-      IMAGE_TAG: ${{ env.IMAGE_TAG }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -50,11 +43,6 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: latest
 
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
