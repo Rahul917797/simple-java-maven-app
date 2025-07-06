@@ -54,4 +54,4 @@ jobs:
           kubectl apply -f svc.yaml
 
       - name: Verify rollout
-        run: kubectl rollout status deployment/java-app
+        run: kubectl rollout restart deployment/java-app
