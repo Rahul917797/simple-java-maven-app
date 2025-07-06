@@ -1,6 +1,6 @@
 # Deployment File
 
-name: Deploy tomcat to EKS
+name: Deploy Java app to EKS
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  EKS_CLUSTER_NAME: kube
+  EKS_CLUSTER_NAME: action
 
 jobs:
   deploy:
@@ -39,7 +39,7 @@ jobs:
         run: aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
 
 
-      - name: Deploy tomcat app
+      - name: Deploy java app
         run: |
           kubectl apply -f dep.yaml
           kubectl apply -f svc.yaml
