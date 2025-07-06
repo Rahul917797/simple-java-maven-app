@@ -27,7 +27,9 @@ jobs:
           java-version: '17'
 
       - name: Build JAR file with Maven
-        run: mvn clean package
+        run: |
+          cd simple-java-maven-app
+          mvn clean package
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
