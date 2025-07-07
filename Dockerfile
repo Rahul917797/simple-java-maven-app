@@ -1,14 +1,28 @@
-FROM openjdk:17-jdk-slim
+# Stage 1: Java app stage
+FROM openjdk:17-jdk-slim AS java-app
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy the built JAR file
 COPY target/my-app-1.0-SNAPSHOT.jar /app/my-app.jar
 
-# Expose port (optional if your app uses it)
+# Expose Java app port
 EXPOSE 8080
 
-# Run the Java app and keep container alive if it exits
-CMD java -jar my-app.jar || tail -f /dev/null
+# Stage 2: Nginx + Java app runner
+FROM nginx:stable-alpine
+
+# Copy the Java app jar from the previous stage
+COPY --from=java-app /app/my-app.jar /app/my-app.jar
+
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy start script to launch both processes
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Expose nginx port 80
+EXPOSE 80
+
+# Run the start script
+CMD ["/start.sh"]
 
