@@ -1,28 +1,25 @@
-# Stage 1: Java app stage
-FROM openjdk:17-jdk-slim AS java-app
+FROM openjdk:17-jdk-slim
 
+# Install nginx
+RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
+
+# Copy Java app JAR
 COPY target/my-app-1.0-SNAPSHOT.jar /app/my-app.jar
 
-# Expose Java app port
-EXPOSE 8080
-
-# Stage 2: Nginx + Java app runner
-FROM nginx:stable-alpine
-
-# Copy the Java app jar from the previous stage
-COPY --from=java-app /app/my-app.jar /app/my-app.jar
-
-# Copy custom nginx config
+# Copy nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy start script to launch both processes
+# Copy start script and make it executable
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Expose nginx port 80
+# Expose ports for nginx and Java app (if needed)
 EXPOSE 80
+EXPOSE 8080
 
-# Run the start script
+# Run start script
 CMD ["/start.sh"]
 
