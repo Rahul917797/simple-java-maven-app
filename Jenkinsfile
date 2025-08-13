@@ -4,7 +4,7 @@ pipeline{
   stages{
     stage('checkout'){
       steps{
-        git branch: 'main', url: 'https://github.com/Rahul917797/Build-Triggers.git'
+        git branch: 'master', url: 'https://github.com/Rahul917797/simple-java-maven-app.git'
            }
      }
 
