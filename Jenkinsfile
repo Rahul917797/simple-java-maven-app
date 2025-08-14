@@ -2,7 +2,7 @@ pipeline{
   agent any
 
   stages{
-    stage('CheckOut-Code'){
+    stage('CheckOut'){
       steps{
         git branch: 'master', url: 'https://github.com/Rahul917797/simple-java-maven-app.git'
            }
