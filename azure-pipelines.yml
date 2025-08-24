@@ -1,0 +1,42 @@
+trigger:
+  - main
+
+variables:
+  artifactName: 'my-app'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: 'Build and Test Java App'
+  jobs:
+    - job: build
+      displayName: 'Build Job'
+      steps:
+        - task: Maven@3
+          displayName: 'Build with Maven'
+          inputs:
+            mavenPomFile: 'pom.xml'
+            goals: 'clean package'
+            options: '-Xmx1024m'
+            publishJUnitResults: true
+            testResultsFiles: '**/target/surefire-reports/TEST-*.xml'
+            javaHomeOption: 'JDKVersion'
+            jdkVersionOption: '17'
+            mavenVersionOption: 'Default'
+
+        - script: java -version
+          displayName: 'Show Java Version'
+
+        - task: CopyFiles@2
+          displayName: 'Copy JAR Artifact'
+          inputs:
+            contents: '**/target/*.jar'
+            targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Build Artifacts'
+          inputs:
+            pathToPublish: '$(Build.ArtifactStagingDirectory)'
+            artifactName: '$(artifactName)'
